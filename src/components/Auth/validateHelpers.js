@@ -5,5 +5,5 @@ export const validateEmail = (email) => {
   );
 };
 export const validatePassword = (password) => {
-  return password.match(/^$/);
+  return password.length > 6;
 };

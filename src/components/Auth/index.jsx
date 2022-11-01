@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { auth } from "../../store/reducers/actionCreators";
 import { authSlice } from "../../store/reducers/authSlice";
 // componenst
 import InputItem from "../InputItem";
 // loader
-import LoaderCircle from "../Loaders/circle";
+import { Loader } from "../Loaders/circle/views";
 // helpers
 import { validateEmail, validatePassword } from "./validateHelpers";
 // views
@@ -32,7 +32,7 @@ const Auth = () => {
   });
 
   const Login = async () => {
-    if (!validatePassword(password) && validateEmail(email)) {
+    if (validatePassword(password) && validateEmail(email)) {
       dispatch(auth(password, email));
     }
 
@@ -46,12 +46,12 @@ const Auth = () => {
     }
 
     if (validatePassword(password)) {
+      setValidError((prev) => ({ ...prev, passwordError: "" }));
+    } else {
       setValidError((prev) => ({
         ...prev,
         passwordError: "not valid password",
       }));
-    } else {
-      setValidError((prev) => ({ ...prev, passwordError: "" }));
     }
   };
 
@@ -59,33 +59,27 @@ const Auth = () => {
     <Wrapper>
       <FormWrapper>
         <InputItem
-          label={"email"}
+          label="email"
           value={email}
           handler={(e) => dispatch(setEmail(e.target.value))}
           error={validError.emailError}
         />
         <InputItem
-          label={"password"}
+          label="password"
           value={password}
           handler={(e) => dispatch(setPassword(e.target.value))}
           error={validError.passwordError}
         />
-        <Button onClick={Login}>
-          {isLoading ? <LoaderCircle /> : "Login"}
-        </Button>
+        <Button onClick={Login}>{isLoading ? <Loader /> : "Login"}</Button>
 
-        {enter ? (
-          <Link to="/main">
-            <Button>{"------>"}</Button>
-          </Link>
-        ) : null}
+        {enter && <Navigate to="/main" replace={true} />}
       </FormWrapper>
 
       {modalIsOpen ? (
         <Modal>
           <ModalContent>
             <ModalText>
-              {"Internal server error. Please try again later"}
+              "Internal server error. Please try again later"
             </ModalText>
             <Button onClick={() => dispatch(modalState(false))}>ok</Button>
           </ModalContent>

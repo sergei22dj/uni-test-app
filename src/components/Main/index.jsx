@@ -8,7 +8,7 @@ import CardItem from "../card-item";
 // data from localstorage
 import { filterData } from "./filterData";
 // loader
-import LoaderCircle from "../Loaders/circle";
+import { Loader } from "../Loaders/circle/views";
 // views
 import { FilterWrapper, TableWrapper, Wrapper } from "./views";
 import { Button } from "../Auth/views";
@@ -24,7 +24,7 @@ const Main = () => {
     pageNumber: 1,
   });
 
-  const addItems = () => {
+  const loadMoreItems = () => {
     setReqParams({ ...reqParams, pageNumber: reqParams.pageNumber + 1 });
   };
 
@@ -37,9 +37,7 @@ const Main = () => {
   };
 
   const onChangeInputsHandler = (e) => {
-    const values = { ...reqParams };
-    values[e.target.name] = e.target.value;
-    setReqParams(values);
+    setReqParams((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   useEffect(() => {
@@ -47,6 +45,7 @@ const Main = () => {
   }, [reqParams.pageNumber]);
 
   localStorage.setItem("reqParams", JSON.stringify(reqParams));
+
   return (
     <Wrapper>
       <FilterWrapper>
@@ -100,9 +99,7 @@ const Main = () => {
         </TableWrapper>
       )}
 
-      <Button onClick={addItems}>
-        {isLoading ? <LoaderCircle /> : "MORE"}
-      </Button>
+      <Button onClick={loadMoreItems}>{isLoading ? <Loader /> : "MORE"}</Button>
     </Wrapper>
   );
 };
